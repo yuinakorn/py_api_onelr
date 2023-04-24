@@ -40,7 +40,7 @@ class DbPreg(Base):
 
 class PregBase(BaseModel):
     token: str
-    hcode: str
+    # hcode: str
     cid: str
     an: str
 
@@ -95,7 +95,7 @@ class LoginBase(BaseModel):
 
 class CreateBase(BaseModel):
     token: str
-    hcode: str
+    # hcode: str
     cid: str
     hn: str
     an: str

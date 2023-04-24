@@ -83,7 +83,7 @@ def create(db: Session, request):
     if token_decode(token)['is_valid']:
         current_date = datetime.now()
         new_preg = DbPreg(
-            hcode=request.hcode,
+            hcode=token_decode(token)['token_data']['hosCode'],
             cid=request.cid,
             hn=request.hn,
             an=request.an,
@@ -137,14 +137,14 @@ def update(db: Session, request):
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND, detail={
                     "status": "error",
-                    "message": f"ไม่พบข้อมูล ของ HCODE = {request.hcode}, HN = {request.hn} AN = {request.an}"
+                    "message": f"ไม่พบข้อมูลของ an {request.an}"
                 }
             )
         else:
             now = datetime.now()
             modify_date = now.strftime("%Y-%m-%d %H:%M:%S")
 
-            result.hcode = request.hcode
+            result.hcode = token_decode(token)['token_data']['hosCode']
             result.cid = request.cid
             result.hn = request.hn
             result.an = request.an
