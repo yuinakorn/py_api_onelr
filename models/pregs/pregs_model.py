@@ -34,7 +34,7 @@ class DbPreg(Base):
     status = Column(Integer)
     create_date = Column(DateTime, nullable=True)
     modify_date = Column(DateTime, nullable=True)
-    user_create_date = Column(String, nullable=True)
+    user_create = Column(String, nullable=True)
     user_last_modify = Column(String, nullable=True)
 
 
@@ -76,7 +76,7 @@ class PregDisplayBase(BaseModel):
     status: int
     create_date: datetime
     modify_date: Optional[datetime] = None
-    user_create_date: Optional[str] = None
+    user_create: Optional[str] = None
     user_last_modify: Optional[str] = None
 
     class Config:
@@ -119,7 +119,7 @@ class CreateBase(BaseModel):
     status: int
     create_date: datetime
     modify_date: datetime
-    user_create_date: datetime
+    user_create: Optional[str] = None
     user_last_modify: datetime
 
     class Config:

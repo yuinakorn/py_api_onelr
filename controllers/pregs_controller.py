@@ -107,7 +107,7 @@ def create(db: Session, request):
             status=request.status,
             create_date=current_date,
             modify_date=request.modify_date,
-            user_create_date=request.user_create_date,
+            user_create=request.user_create,
             user_last_modify=request.user_last_modify
         )
         try:
