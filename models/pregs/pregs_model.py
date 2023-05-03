@@ -120,7 +120,7 @@ class CreateBase(BaseModel):
     create_date: datetime
     modify_date: datetime
     user_create: Optional[str] = None
-    user_last_modify: datetime
+    user_last_modify: Optional[str] = None
 
     class Config:
         orm_mode = True
