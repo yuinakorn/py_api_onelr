@@ -35,3 +35,7 @@ def create_new_preg(request: CreateBase, db: Session = Depends(get_db)):
 def update_preg(request: CreateBase, db: Session = Depends(get_db)):
     return pregs_controller.update(db, request)
 
+
+@router.delete("/delete/")
+def delete_preg(request: CreateBase, db: Session = Depends(get_db)):
+    return pregs_controller.delete(db, request)

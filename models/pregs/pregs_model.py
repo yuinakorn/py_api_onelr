@@ -128,3 +128,14 @@ class CreateBase(BaseModel):
     def get(self, key):
         return getattr(self, key, None)
 
+
+class DeleteBase(BaseModel):
+    token: str
+    cid: str
+    an: str
+
+    class Config:
+        orm_mode = True
+
+    def get(self, key):
+        return getattr(self, key, None)

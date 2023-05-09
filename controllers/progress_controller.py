@@ -9,7 +9,7 @@ from sqlalchemy.orm import Session
 from fastapi import HTTPException, status
 from fastapi.responses import JSONResponse
 
-from models.pregs.pregs_model import DbPreg
+from models.progress.progress_model import DbProgress
 
 config_env = dotenv_values(".env")
 
@@ -25,10 +25,10 @@ def token_decode(token):
                             detail={"status": "error", "message": "Token is invalid!!"})
 
 
-def read_preg(request, db: Session):
+def read_progress(request, db: Session):
     token = request.get("token")
     if token_decode(token)['is_valid']:
-        return db.query(DbPreg).filter(DbPreg.hcode == token_decode(token)['token_data']['hosCode']).all()
+        return db.query(DbProgress).filter(DbProgress.hcode == token_decode(token)['token_data']['hosCode']).all()
 
     else:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
@@ -39,8 +39,9 @@ def search(db: Session, request):
     token = request.get("token")
 
     if token_decode(token)['is_valid']:
-        result = db.query(DbPreg).filter(DbPreg.hcode == token_decode(token)['token_data']['hosCode'],
-                                         DbPreg.cid == request.get("cid"), DbPreg.an == request.get("an")).first()
+        result = db.query(DbProgress).filter(DbProgress.hcode == token_decode(token)['token_data']['hosCode'],
+                                             DbProgress.cid == request.get("cid"),
+                                             DbProgress.an == request.get("an")).all()
         if result is None:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND, detail={
@@ -78,45 +79,26 @@ def token_check(request):
 
 
 def create(db: Session, request):
-    token = request.get("token")
+    token = request.token
     if token_decode(token)['is_valid']:
-        current_date = datetime.now()
-        new_preg = DbPreg(
+        new_progress = DbProgress(
             hcode=token_decode(token)['token_data']['hosCode'],
             cid=request.cid,
             hn=request.hn,
             an=request.an,
-            admit_date=request.admit_date,
-            pname=request.pname,
-            lname=request.lname,
-            age_y=request.age_y,
-            gravida=request.gravida,
-            parity=request.parity,
-            ga=request.ga,
-            anc_check_up=request.anc_check_up,
-            no_of_anc=request.no_of_anc,
-            weight_before_pregancy=request.weight_before_pregancy,
-            weight_at_delivery=request.weight_at_delivery,
-            weight_gain=request.weight_gain,
-            height=request.height,
-            fundal_height=request.fundal_height,
-            hematocrit=request.hematocrit,
-            ultrasound=request.ultrasound,
-            cpd_risk_score=request.cpd_risk_score,
-            status=request.status,
-            create_date=current_date,
-            modify_date=request.modify_date,
-            user_create=request.user_create,
-            user_last_modify=request.user_last_modify
+            progress_date_time=request.progress_date_time,
+            code=request.code,
+            value=request.value,
+            comment=request.comment
         )
         try:
-            db.add(new_preg)
+            db.add(new_progress)
             db.commit()
-            db.refresh(new_preg)
-            return {"message": "ok", "detail": new_preg}
+            db.refresh(new_progress)
+            return {"message": "ok", "detail": new_progress}
         except SQLAlchemyError as e:
             db.rollback()
-            error_message = f"Error creating preg: {str(e)}"
+            error_message = f"Error creating Progress: {str(e)}"
             logging.error(error_message)
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
                                 detail={"status": "error", "message": error_message})
@@ -129,9 +111,9 @@ def create(db: Session, request):
 def update(db: Session, request):
     token = request.get("token")
     if token_decode(token)['is_valid']:
-        result = db.query(DbPreg).filter(DbPreg.hcode == token_decode(token)['token_data']['hosCode'],
-                                         DbPreg.cid == request.cid,
-                                         DbPreg.an == request.an).first()
+        result = db.query(DbProgress).filter(DbProgress.hcode == token_decode(token)['token_data']['hosCode'],
+                                             DbProgress.cid == request.cid,
+                                             DbProgress.an == request.an).first()
         if result is None:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND, detail={
@@ -140,32 +122,16 @@ def update(db: Session, request):
                 }
             )
         else:
-            now = datetime.now()
-            modify_date = now.strftime("%Y-%m-%d %H:%M:%S")
+            # now = datetime.now()
+            # modify_date = now.strftime("%Y-%m-%d %H:%M:%S")
             result.hcode = token_decode(token)['token_data']['hosCode']
             result.cid = request.cid
             result.hn = request.hn
             result.an = request.an
-            result.admit_date = request.admit_date
-            result.pname = request.pname
-            result.lname = request.lname
-            result.age_y = request.age_y
-            result.gravida = request.gravida
-            result.parity = request.parity
-            result.ga = request.ga
-            result.anc_check_up = request.anc_check_up
-            result.no_of_anc = request.no_of_anc
-            result.weight_before_pregancy = request.weight_before_pregancy
-            result.weight_at_delivery = request.weight_at_delivery
-            result.weight_gain = request.weight_gain
-            result.height = request.height
-            result.fundal_height = request.fundal_height
-            result.hematocrit = request.hematocrit
-            result.ultrasound = request.ultrasound
-            result.cpd_risk_score = request.cpd_risk_score
-            result.status = request.status
-            result.modify_date = modify_date
-            result.user_last_modify = request.user_last_modify
+            result.progress_date_time = request.progress_date_time
+            result.code = request.code
+            result.value = request.value
+            result.comment = request.comment
 
             try:
                 db.commit()
@@ -173,7 +139,7 @@ def update(db: Session, request):
                 return {"message": "ok", "detail": result}
             except SQLAlchemyError as e:
                 db.rollback()
-                error_message = f"Error updating preg: {str(e)}"
+                error_message = f"Error updating Progress: {str(e)}"
                 logging.error(error_message)
                 raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
                                     detail={"status": "error", "message": error_message})
@@ -186,9 +152,9 @@ def update(db: Session, request):
 def delete(db: Session, request):
     token = request.get("token")
     if token_decode(token)['is_valid']:
-        result = db.query(DbPreg).filter(DbPreg.hcode == token_decode(token)['token_data']['hosCode'],
-                                         DbPreg.cid == request.cid,
-                                         DbPreg.an == request.an).first()
+        result = db.query(DbProgress).filter(DbProgress.hcode == token_decode(token)['token_data']['hosCode'],
+                                             DbProgress.cid == request.cid,
+                                             DbProgress.an == request.an).first()
         if result is None:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND, detail={
@@ -200,10 +166,10 @@ def delete(db: Session, request):
             try:
                 db.delete(result)
                 db.commit()
-                return {"message": "ok"}
+                return {"message": "ok", "detail": result}
             except SQLAlchemyError as e:
                 db.rollback()
-                error_message = f"Error deleting preg: {str(e)}"
+                error_message = f"Error deleting Progress: {str(e)}"
                 logging.error(error_message)
                 raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
                                     detail={"status": "error", "message": error_message})
@@ -211,4 +177,3 @@ def delete(db: Session, request):
     else:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
                             detail={"status": "error", "message": "You are not allowed!!"})
-
