@@ -17,7 +17,7 @@ class DbProgress(Base):
     an = Column(String, primary_key=True, index=True)
     progress_date_time = Column(DateTime, primary_key=True)
     code = Column(String, primary_key=True)
-    value = Column(Integer)
+    value = Column(String)
     comment = Column(String, nullable=True)
 
 
@@ -50,7 +50,7 @@ class DisplayBase(BaseModel):
     an: str
     progress_date_time: Optional[datetime] = None
     code: str
-    value: int
+    value: str
     comment: Optional[str] = None
 
     class Config:
@@ -64,7 +64,7 @@ class CreateBase(BaseModel):
     an: str
     progress_date_time: Optional[datetime] = None
     code: str
-    value: int
+    value: str
     comment: Optional[str] = None
 
     class Config:
