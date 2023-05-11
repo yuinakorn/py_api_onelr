@@ -15,7 +15,7 @@ router = APIRouter(prefix="/progress", tags=["progress"])
 #
 
 @router.post("/search/", response_model=List[DisplayBase])
-async def read_progress_by_cid(request: ProgressBase, db: Session = Depends(get_db)):
+async def read_progress_by_an(request: ProgressBase, db: Session = Depends(get_db)):
     return progress_controller.search(db, request)
 
 

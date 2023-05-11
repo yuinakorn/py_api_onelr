@@ -17,7 +17,7 @@ def read_preg_all(request: LoginBase, db: Session = Depends(get_db)):
 
 
 @router.post("/search/")
-def read_preg_by_cid(request: PregBase, db: Session = Depends(get_db)):
+def read_preg_by_an(request: PregBase, db: Session = Depends(get_db)):
     return pregs_controller.search(db, request)
 
 

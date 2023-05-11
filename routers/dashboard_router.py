@@ -11,6 +11,11 @@ from controllers import dashboard_controller
 router = APIRouter(prefix="/dashboard", tags=["dashboard"])
 
 
+@router.get("/hospitals/")
+def read_hostpitals():
+    return dashboard_controller.read_hostpitals()
+
+
 @router.post("/hospitals/")
 def read_dashboard_all():
     return dashboard_controller.read_dashboard_all()
@@ -24,4 +29,3 @@ def read_hospital_by_hcode(hcode: str):
 @router.post("/chart/{hcode}/{an}")
 def read_chart_by_an(hcode: str, an: str):
     return dashboard_controller.read_hospital_by_an(hcode, an)
-
