@@ -119,11 +119,11 @@ def read_hospital_by_an(hcode, an):
                                                         "union all " \
                                                         "SELECT " \
                                                         "cid,an,hcode, " \
-                                                        "JSON_OBJECT('BP', " \
+                                                        "JSON_OBJECT('bp', " \
                                                         "JSON_ARRAYAGG( " \
                                                         "JSON_OBJECT('update_time',progress_date_time, " \
                                                         "'time',time(progress_date_time), " \
-                                                        "'SBP',SBP,'DBP',DBP) " \
+                                                        "'value1',SBP,'value2',DBP) " \
                                                         ")) v " \
                                                         "from (SELECT " \
                                                         "cid,an,hcode, " \
