@@ -75,7 +75,7 @@ def read_hospital_by_hcode(hcode):
         sql = "SELECT chospital.hosname, t_pregancy.* FROM t_pregancy " \
               "INNER JOIN chospital ON t_pregancy.hcode = chospital.hoscode " \
               "WHERE hcode = " + hcode + " " \
-                                         "AND date_format(admit_date,'%Y-%m-%d') BETWEEN SUBDATE(CURRENT_DATE,INTERVAL 2 DAY) AND CURRENT_DATE"
+              "AND date_format(admit_date,'%Y-%m-%d') BETWEEN SUBDATE(CURRENT_DATE,INTERVAL 2 DAY) AND CURRENT_DATE"
         cursor.execute(sql)
         result = cursor.fetchall()
         connection.close()
@@ -113,32 +113,33 @@ def read_hospital_by_an(hcode, an):
               "from progress " \
               "INNER JOIN ccode on progress.`code`=ccode.`code` " \
               "WHERE progress.`code` not in('C06','C07') " \
-              "AND hcode='" + hcode + "' " \
-                                      "and an='" + an + "' " \
-                                                        "GROUP BY cid,an,hcode,ccode.`code` " \
-                                                        "union all " \
-                                                        "SELECT " \
-                                                        "cid,an,hcode, " \
-                                                        "JSON_OBJECT('bp', " \
-                                                        "JSON_ARRAYAGG( " \
-                                                        "JSON_OBJECT('update_time',progress_date_time, " \
-                                                        "'time',time(progress_date_time), " \
-                                                        "'value1',SBP,'value2',DBP) " \
-                                                        ")) v " \
-                                                        "from (SELECT " \
-                                                        "cid,an,hcode, " \
-                                                        "progress.progress_date_time, " \
-                                                        "mid(value,1,instr(value,'/')-1) as  'SBP', " \
-                                                        "mid(value,instr(value,'/')+1,3) as  'DBP' " \
-                                                        "from progress " \
-                                                        "INNER JOIN ccode on progress.`code`=ccode.`code` " \
-                                                        "WHERE progress.`code` ='C06' " \
-                                                        "AND hcode='" + hcode + "' " \
-                                                                                "and an='" + an + "' " \
-                                                                                                  "GROUP BY cid,an,hcode,time(progress_date_time) " \
-                                                                                                  ") progress " \
-                                                                                                  ") d"
-        cursor.execute(sql)
+              "AND hcode=%s " \
+              "and an=%s " \
+              "GROUP BY cid,an,hcode,ccode.`code` " \
+              "union all " \
+              "SELECT " \
+              "cid,an,hcode, " \
+              "JSON_OBJECT('bp', " \
+              "JSON_ARRAYAGG( " \
+              "JSON_OBJECT('update_time',progress_date_time, " \
+              "'time',time(progress_date_time), " \
+              "'value1',SBP,'value2',DBP) " \
+              ")) v " \
+              "from (SELECT " \
+              "cid,an,hcode, " \
+              "progress.progress_date_time, " \
+              "mid(value,1,instr(value,'/')-1) as  'SBP', " \
+              "mid(value,instr(value,'/')+1,3) as  'DBP' " \
+              "from progress " \
+              "INNER JOIN ccode on progress.`code`=ccode.`code` " \
+              "WHERE progress.`code` ='C06' " \
+              "AND hcode=%s " \
+              "and an=%s " \
+              "GROUP BY cid,an,hcode,time(progress_date_time) " \
+              ") progress " \
+              ") d"
+        value = (hcode, an, hcode, an)
+        cursor.execute(sql, value)
         result = cursor.fetchall()
         data = result[0]['jdata']
         formatted_data = json.loads(data)
