@@ -1,7 +1,7 @@
 from datetime import datetime
 
 from sqlalchemy import Column
-from sqlalchemy.sql.sqltypes import Integer, String, DateTime
+from sqlalchemy.sql.sqltypes import Integer, String, DateTime, Float
 
 from models.database import Base
 from pydantic import BaseModel
@@ -23,9 +23,9 @@ class DbPreg(Base):
     ga = Column(String)
     anc_check_up = Column(String)
     no_of_anc = Column(String)
-    weight_before_pregancy = Column(String)
-    weight_at_delivery = Column(String)
-    weight_gain = Column(String)
+    weight_before_pregancy = Column(Float, nullable=True)
+    weight_at_delivery = Column(Float, nullable=True)
+    weight_gain = Column(Float, nullable=True)
     height = Column(String)
     fundal_height = Column(String)
     hematocrit = Column(String)
@@ -77,9 +77,9 @@ class PregDisplayBase(BaseModel):
     ga: str
     anc_check_up: str
     no_of_anc: str
-    weight_before_pregancy: str
-    weight_at_delivery: str
-    weight_gain: str
+    weight_before_pregancy: float
+    weight_at_delivery: float
+    weight_gain: float
     height: str
     fundal_height: str
     hematocrit: str
@@ -119,9 +119,9 @@ class CreateBase(BaseModel):
     ga: str
     anc_check_up: str
     no_of_anc: str
-    weight_before_pregancy: str
-    weight_at_delivery: str
-    weight_gain: str
+    weight_before_pregancy: float
+    weight_at_delivery: float
+    weight_gain: float
     height: str
     fundal_height: str
     hematocrit: str
