@@ -83,6 +83,19 @@ def read_hospital_by_hcode(hcode):
         return result
 
 
+def read_patient_by_an(hcode, an):
+    connection = get_connection()
+    with connection.cursor() as cursor:
+        # execute with bind param
+        sql = "SELECT * FROM t_pregancy WHERE hcode = %s AND an = %s"
+        value = (hcode, an)
+        cursor.execute(sql, value)
+        result = cursor.fetchone()
+        connection.close()
+
+        return result
+
+
 def read_hospital_by_an(hcode, an):
     connection = get_connection()
     with connection.cursor() as cursor:

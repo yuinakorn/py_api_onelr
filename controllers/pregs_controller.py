@@ -1,5 +1,6 @@
 import jwt
 import logging
+import requests
 from dotenv import dotenv_values
 from datetime import datetime
 
@@ -42,6 +43,30 @@ def search(db: Session, request):
         result = db.query(DbPreg).filter(DbPreg.hcode == token_decode(token)['token_data']['hosCode'],
                                          DbPreg.cid == request.get("cid"), DbPreg.an == request.get("an")).first()
         if result is None:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND, detail={
+                    "status": "error",
+                    "message": f"ไม่พบข้อมูลของ an {request.get('an')} ในระบบ"
+                }
+            )
+        else:
+            return result
+
+    else:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
+                            detail={"status": "error", "message": "You are not allowed!!"})
+
+
+def his_search(request):
+    token = request.get("token")
+
+    if token_decode(token)['is_valid']:
+        auth = {}
+        api_url = f"{config_env['HIS_URL']}/person_anc/{request.get('hcode')}?cid={request.get('cid')}"
+        response = requests.get(api_url, auth=auth)
+        result = response.json()
+
+        if response is None:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND, detail={
                     "status": "error",
@@ -211,4 +236,3 @@ def delete(db: Session, request):
     else:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
                             detail={"status": "error", "message": "You are not allowed!!"})
-

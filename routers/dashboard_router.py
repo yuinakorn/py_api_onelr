@@ -26,6 +26,13 @@ def read_hospital_by_hcode(hcode: str):
     return dashboard_controller.read_hospital_by_hcode(hcode)
 
 
+@router.post("/patient/{hcode}/{an}")
+def read_patient_by_an(hcode: str, an: str):
+    return dashboard_controller.read_patient_by_an(hcode, an)
+
+
 @router.post("/chart/{hcode}/{an}")
 def read_chart_by_an(hcode: str, an: str):
-    return dashboard_controller.read_hospital_by_an(hcode, an)
+    return dashboard_controller.read_hospital_by_an(hcode, an)\
+
+

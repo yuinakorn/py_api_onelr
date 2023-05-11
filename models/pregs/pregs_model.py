@@ -36,13 +36,25 @@ class DbPreg(Base):
     modify_date = Column(DateTime, nullable=True)
     user_create = Column(String, nullable=True)
     user_last_modify = Column(String, nullable=True)
+    image = Column(String, nullable=True)
 
 
 class PregBase(BaseModel):
     token: str
-    # hcode: str
     cid: str
     an: str
+
+    class Config:
+        orm_mode = True
+
+    def get(self, key):
+        return getattr(self, key, None)
+
+
+class PregBaseCid(BaseModel):
+    token: str
+    cid: str
+    hcode: str
 
     class Config:
         orm_mode = True
@@ -95,7 +107,6 @@ class LoginBase(BaseModel):
 
 class CreateBase(BaseModel):
     token: str
-    # hcode: str
     cid: str
     hn: str
     an: str
@@ -121,6 +132,7 @@ class CreateBase(BaseModel):
     modify_date: datetime
     user_create: Optional[str] = None
     user_last_modify: Optional[str] = None
+    image: Optional[str] = None
 
     class Config:
         orm_mode = True
