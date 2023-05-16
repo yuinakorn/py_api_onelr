@@ -154,7 +154,9 @@ def delete(db: Session, request):
     if token_decode(token)['is_valid']:
         result = db.query(DbProgress).filter(DbProgress.hcode == token_decode(token)['token_data']['hosCode'],
                                              DbProgress.cid == request.cid,
-                                             DbProgress.an == request.an).first()
+                                             DbProgress.an == request.an,
+                                             DbProgress.progress_date_time == request.progress_date_time,
+                                             DbProgress.code == request.code).first()
         if result is None:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND, detail={
