@@ -225,7 +225,7 @@ def delete(db: Session, request):
             try:
                 db.delete(result)
                 db.commit()
-                return {"message": "ok"}
+                return {"message": "ok", "detail": result}
             except SQLAlchemyError as e:
                 db.rollback()
                 error_message = f"Error deleting preg: {str(e)}"
