@@ -1,6 +1,7 @@
 from datetime import datetime
 
-from sqlalchemy import Column
+from sqlalchemy import Column, ForeignKey, join
+from sqlalchemy.orm import relationship
 from sqlalchemy.sql.sqltypes import Integer, String, DateTime, Float
 
 from models.database import Base
@@ -37,6 +38,11 @@ class DbPreg(Base):
     user_create = Column(String, nullable=True)
     user_last_modify = Column(String, nullable=True)
     image = Column(String, nullable=True)
+
+    # Relationship with Chospital
+    # hcode = Column(String, ForeignKey('chospital.id'))
+
+    # hcode = relationship("Chospital", back_populates="hoscode")
 
 
 class PregBase(BaseModel):
@@ -90,6 +96,7 @@ class PregDisplayBase(BaseModel):
     modify_date: Optional[datetime] = None
     user_create: Optional[str] = None
     user_last_modify: Optional[str] = None
+    image: Optional[str] = None
 
     class Config:
         orm_mode = True
@@ -151,3 +158,15 @@ class DeleteBase(BaseModel):
 
     def get(self, key):
         return getattr(self, key, None)
+
+
+# Define your Chospital model
+class Chospital(Base):
+    """This class represents a hospital."""
+    __tablename__ = 'chospital'
+    hoscode = Column(String, primary_key=True, index=True)
+    hosname = Column(String, nullable=True)
+    # hoscode = Column(Integer, ForeignKey("t_pregancy.hcode"))
+
+    # owner = relationship("DbPreg", back_populates="hcode")
+

@@ -69,6 +69,13 @@ def read_dashboard_all():
         return result
 
 
+class DateTimeEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, datetime):
+            return obj.isoformat()
+        return super().default(obj)
+
+
 def read_hospital_by_hcode(hcode):
     connection = get_connection()
     with connection.cursor() as cursor:

@@ -10,7 +10,7 @@ from sqlalchemy.orm import Session
 from fastapi import HTTPException, status
 from fastapi.responses import JSONResponse
 
-from models.pregs.pregs_model import DbPreg
+from models.pregs.pregs_model import DbPreg, Chospital
 
 config_env = dotenv_values(".env")
 
@@ -34,6 +34,24 @@ def read_preg(request, db: Session):
     else:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
                             detail={"status": "error", "message": "You are not allowed!!"})
+
+
+# เฉพาะแม่ข่าย
+def read_preg_all(request, db: Session):
+    token = request.get("token")
+    secret_key = config_env["SECRET_KEY"]
+    try:
+        decoded_token = jwt.decode(token, secret_key, algorithms=[config_env["ALGORITHM"]])
+        if decoded_token['hosCode'] == config_env['ADMIN_HOSCODE']:
+            result = db.query(DbPreg).all()
+            return result
+        else:
+            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
+                                detail={"status": "error", "message": "You are not allowed!!"})
+
+    except jwt.InvalidTokenError:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
+                            detail={"status": "error", "message": "Token is invalid!!"})
 
 
 def search(db: Session, request):
@@ -106,6 +124,7 @@ def create(db: Session, request):
     token = request.get("token")
     if token_decode(token)['is_valid']:
         current_date = datetime.now()
+        image = request.image.replce("\n", "")
         new_preg = DbPreg(
             hcode=token_decode(token)['token_data']['hosCode'],
             cid=request.cid,
@@ -132,7 +151,8 @@ def create(db: Session, request):
             create_date=current_date,
             modify_date=request.modify_date,
             user_create=request.user_create,
-            user_last_modify=request.user_last_modify
+            user_last_modify=request.user_last_modify,
+            image=image,
         )
         try:
             db.add(new_preg)
@@ -168,6 +188,7 @@ def update(db: Session, request):
             now = datetime.now()
             modify_date = now.strftime("%Y-%m-%d %H:%M:%S")
             result.hcode = token_decode(token)['token_data']['hosCode']
+            image = request.image.replce("\n", "")
             result.cid = request.cid
             result.hn = request.hn
             result.an = request.an
@@ -191,6 +212,7 @@ def update(db: Session, request):
             result.status = request.status
             result.modify_date = modify_date
             result.user_last_modify = request.user_last_modify
+            result.image = image
 
             try:
                 db.commit()

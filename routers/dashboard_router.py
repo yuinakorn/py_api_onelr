@@ -4,7 +4,7 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 from models.database import get_db
 from models.pregs.pregs_model import PregBase, PregDisplayBase, LoginBase, CreateBase
-from controllers import dashboard_controller
+from controllers import dashboard_controller, pregs_controller
 
 # from utils.oauth2 import access_user_token
 
@@ -14,6 +14,12 @@ router = APIRouter(prefix="/dashboard", tags=["dashboard"])
 @router.get("/hospitals/")
 def read_hostpitals():
     return dashboard_controller.read_hostpitals()
+
+
+# เฉพาะแม่ข่าย
+@router.post("/patients/", response_model=List[PregDisplayBase])
+def read_preg_all(request: LoginBase, db: Session = Depends(get_db)):
+    return pregs_controller.read_preg_all(request, db)
 
 
 @router.post("/hospitals/")

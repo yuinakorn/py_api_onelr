@@ -12,7 +12,7 @@ router = APIRouter(prefix="/pregs", tags=["pregs"])
 
 
 @router.post("/", response_model=List[PregDisplayBase])
-def read_preg_all(request: LoginBase, db: Session = Depends(get_db)):
+def read_preg_all_by_hcode(request: LoginBase, db: Session = Depends(get_db)):
     return pregs_controller.read_preg(request, db)
 
 
