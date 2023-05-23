@@ -52,9 +52,9 @@ class DisplayBase(BaseModel):
     an: str
     progress_date_time: Optional[datetime] = None
     code: str
-    value: str
-    value2: str
-    value3: str
+    value: Optional[str] = None
+    value2: Optional[str] = None
+    value3: Optional[str] = None
     comment: Optional[str] = None
 
     class Config:
