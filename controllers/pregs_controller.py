@@ -124,7 +124,8 @@ def create(db: Session, request):
     token = request.get("token")
     if token_decode(token)['is_valid']:
         current_date = datetime.now()
-        image = request.image.replce("\n", "")
+        # image = request.image.replce("\n", "")
+        image = str(request.image).replace("\n", "")
         new_preg = DbPreg(
             hcode=token_decode(token)['token_data']['hosCode'],
             cid=request.cid,
