@@ -89,6 +89,8 @@ def create(db: Session, request):
             progress_date_time=request.progress_date_time,
             code=request.code,
             value=request.value,
+            value2=request.value2,
+            value3=request.value3,
             comment=request.comment
         )
         try:
@@ -131,6 +133,8 @@ def update(db: Session, request):
             result.progress_date_time = request.progress_date_time
             result.code = request.code
             result.value = request.value
+            result.value2 = request.value2
+            result.value3 = request.value3
             result.comment = request.comment
 
             try:
