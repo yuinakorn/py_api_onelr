@@ -16,6 +16,7 @@ class DbPreg(Base):
     hn = Column(String)
     an = Column(String, primary_key=True, index=True)
     admit_date = Column(DateTime, nullable=True)
+    title = Column(String, nullable=True)
     pname = Column(String)
     lname = Column(String)
     age_y = Column(String)
@@ -75,6 +76,7 @@ class PregDisplayBase(BaseModel):
     hn: str
     an: str
     admit_date: Optional[datetime] = None
+    title: Optional[str] = None
     pname: str
     lname: str
     age_y: str
@@ -118,6 +120,7 @@ class CreateBase(BaseModel):
     hn: str
     an: str
     admit_date: datetime
+    title: Optional[str] = None
     pname: str
     lname: str
     age_y: str

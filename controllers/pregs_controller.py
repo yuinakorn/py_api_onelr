@@ -124,7 +124,6 @@ def create(db: Session, request):
     token = request.get("token")
     if token_decode(token)['is_valid']:
         current_date = datetime.now()
-        # image = request.image.replce("\n", "")
         image = str(request.image).replace("\n", "")
         new_preg = DbPreg(
             hcode=token_decode(token)['token_data']['hosCode'],
@@ -132,6 +131,7 @@ def create(db: Session, request):
             hn=request.hn,
             an=request.an,
             admit_date=request.admit_date,
+            title=request.title,
             pname=request.pname,
             lname=request.lname,
             age_y=request.age_y,
@@ -194,6 +194,7 @@ def update(db: Session, request):
             result.hn = request.hn
             result.an = request.an
             result.admit_date = request.admit_date
+            result.title = request.title
             result.pname = request.pname
             result.lname = request.lname
             result.age_y = request.age_y
