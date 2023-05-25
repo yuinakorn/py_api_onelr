@@ -120,27 +120,27 @@ class CreateBase(BaseModel):
     cid: str
     hn: str
     an: str
-    admit_date: datetime
+    admit_date: Optional[datetime] = None
     title: Optional[str] = None
-    pname: str
-    lname: str
-    age_y: str
-    gravida: str
-    parity: str
-    ga: str
-    anc_check_up: str
-    no_of_anc: str
-    weight_before_pregancy: float
-    weight_at_delivery: float
-    weight_gain: float
-    height: str
-    fundal_height: str
-    hematocrit: str
-    ultrasound: str
+    pname: Optional[str] = None
+    lname: Optional[str] = None
+    age_y: Optional[str] = None
+    gravida: Optional[str] = None
+    parity: Optional[str] = None
+    ga: Optional[str] = None
+    anc_check_up: Optional[str] = None
+    no_of_anc: Optional[str] = None
+    weight_before_pregancy: Optional[float] = None
+    weight_at_delivery: Optional[float] = None
+    weight_gain: Optional[float] = None
+    height: Optional[str] = None
+    fundal_height: Optional[str] = None
+    hematocrit: Optional[str] = None
+    ultrasound: Optional[str] = None
     cpd_risk_score: Optional[str] = None
-    status: int
-    create_date: datetime
-    modify_date: datetime
+    status: Optional[int] = None
+    create_date: Optional[datetime] = None
+    modify_date: Optional[datetime] = None
     user_create: Optional[str] = None
     user_last_modify: Optional[str] = None
     refer_status: Optional[int] = None
