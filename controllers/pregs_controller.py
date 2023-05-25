@@ -189,7 +189,8 @@ def update(db: Session, request):
             now = datetime.now()
             modify_date = now.strftime("%Y-%m-%d %H:%M:%S")
             result.hcode = token_decode(token)['token_data']['hosCode']
-            image = request.image.replce("\n", "")
+            # image = request.image.replce("\n", "")
+            image = str(request.image).replace("\n", "")
             result.cid = request.cid
             result.hn = request.hn
             result.an = request.an
