@@ -98,6 +98,7 @@ class PregDisplayBase(BaseModel):
     modify_date: Optional[datetime] = None
     user_create: Optional[str] = None
     user_last_modify: Optional[str] = None
+    refer_status: Optional[int] = None
     image: Optional[str] = None
 
     class Config:
@@ -142,6 +143,7 @@ class CreateBase(BaseModel):
     modify_date: datetime
     user_create: Optional[str] = None
     user_last_modify: Optional[str] = None
+    refer_status: Optional[int] = None
     image: Optional[str] = None
 
     class Config:
