@@ -38,6 +38,7 @@ class DbPreg(Base):
     modify_date = Column(DateTime, nullable=True)
     user_create = Column(String, nullable=True)
     user_last_modify = Column(String, nullable=True)
+    refer_status = Column(String, nullable=True)
     image = Column(String, nullable=True)
 
     # Relationship with Chospital
