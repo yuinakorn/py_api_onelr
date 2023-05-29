@@ -16,7 +16,7 @@ engine = create_engine("mysql+pymysql://{user}:{password}@{host}:{port}/{db_name
     db_name=config_env['DB_NAME'],
     pool_size=50,
     max_overflow=100,
-    pool_recycle=240,
+    # pool_recycle=240,
     # wait_time=28800,
 ))
 
