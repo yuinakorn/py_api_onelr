@@ -263,3 +263,5 @@ def delete(db: Session, request):
     else:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
                             detail={"status": "error", "message": "You are not allowed!!"})
+
+
