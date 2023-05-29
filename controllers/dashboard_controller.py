@@ -42,7 +42,7 @@ def read_hostpitals():
     connection = get_connection()
     with connection.cursor() as cursor:
         sql = "SELECT hoscode,hosname FROM chospital " \
-              "WHERE provcode = '50' " \
+              "WHERE provcode = '51' " \
               "AND hostype in (5,6,7)"
         cursor.execute(sql)
         result = cursor.fetchall()
