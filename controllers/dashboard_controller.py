@@ -65,7 +65,9 @@ def read_dashboard_all():
         sql = "SELECT hcode,chospital.hosname as hosname, " \
               "count(if(cpd_risk_score < 5,hn,NULL)) as green, " \
               "count(if(cpd_risk_score >= 5 AND cpd_risk_score <= 9.5,hn,NULL)) as yellow, " \
-              "count(if(cpd_risk_score >=10,hn,NULL)) as red " \
+              "count(if(cpd_risk_score >=10,hn,NULL)) as red, " \
+              "SUBDATE(CURRENT_DATE,INTERVAL 2 DAY) as subdate, " \
+              "CURRENT_DATE as currentdate " \
               "FROM t_pregancy " \
               "INNER JOIN chospital on chospital.hoscode = t_pregancy.hcode " \
               "WHERE date_format(admit_date,'%Y-%m-%d') BETWEEN SUBDATE(CURRENT_DATE,INTERVAL 2 DAY) AND CURRENT_DATE " \
