@@ -1,17 +1,12 @@
 from fastapi import FastAPI
 
-from models.pregs.pregs_model import PregBase, PregDisplayBase
-from routers import pregs_router, infants_router, dashboard_router, progress_router
-# from routers import dashboard_router
-# from routers import progress_router
-
-# from routers.auth import authen_router
-# from routers.items import items_router
-from models.database import engine
+from routers import pregs_router, infants_router, dashboard_router, progress_router, auth_router
 
 from fastapi.middleware.cors import CORSMiddleware
 
-app = FastAPI()
+# app = FastAPI(docs_url=None, redoc_url=None)
+app = FastAPI(docs_url="/api-docs", redoc_url=None)
+
 # Allow requests from all origins
 app.add_middleware(
     CORSMiddleware,
@@ -21,6 +16,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+app.include_router(auth_router.router)
 app.include_router(pregs_router.router)
 app.include_router(infants_router.router)
 app.include_router(progress_router.router)

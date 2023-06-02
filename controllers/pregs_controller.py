@@ -107,7 +107,7 @@ def token_check(request):
         user_data = {
             "hoscode": decoded_token["hosCode"],
             "username": decoded_token["username"],
-            "user_cid": decoded_token["cid"]
+            # "user_cid": decoded_token["cid"]
         }
         # print(user_data)
         message = "Token is valid"
