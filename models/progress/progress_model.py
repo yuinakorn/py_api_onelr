@@ -25,6 +25,7 @@ class DbProgress(Base):
 
 class ProgressBase(BaseModel):
     token: str
+    hcode: str
     cid: str
     an: str
 
