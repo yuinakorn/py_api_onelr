@@ -1,9 +1,9 @@
 version: '3'
 services:
   main:
-    image: 'yuinakorn/py_api_onelr:latest'
+    image: 'yuinakorn/py_api_onelr_gunicorn:latest'
     ports:
-      - '8085:8000'
+      - '8084:8000'
     volumes:
       - './:/app'
     restart: 'unless-stopped'

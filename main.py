@@ -16,9 +16,19 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+
+@app.on_event("startup")
+async def startup_event():
+    print("Server startup event")
+
+
+@app.on_event("shutdown")
+async def shutdown_event():
+    print("Server shutdown event")
+
+
 app.include_router(auth_router.router)
 app.include_router(pregs_router.router)
 app.include_router(infants_router.router)
 app.include_router(progress_router.router)
 app.include_router(dashboard_router.router)
-
