@@ -70,7 +70,7 @@ def read_dashboard_all():
               "CURRENT_DATE as currentdate " \
               "FROM t_pregancy " \
               "INNER JOIN chospital on chospital.hoscode = t_pregancy.hcode " \
-              "WHERE date_format(admit_date,'%Y-%m-%d') BETWEEN SUBDATE(CURRENT_DATE,INTERVAL 2 DAY) AND CURRENT_DATE " \
+              "WHERE admit_date BETWEEN SUBDATE(CURRENT_DATE,INTERVAL 2 DAY) AND CURRENT_DATE " \
               "GROUP BY t_pregancy.hcode"
         cursor.execute(sql)
         result = cursor.fetchall()
@@ -87,17 +87,22 @@ class DateTimeEncoder(json.JSONEncoder):
 
 
 def read_hospital_by_hcode(hcode):
-    connection = get_connection()
-    with connection.cursor() as cursor:
-        sql = "SELECT chospital.hosname, t_pregancy.* FROM t_pregancy " \
-              "INNER JOIN chospital ON t_pregancy.hcode = chospital.hoscode " \
-              "WHERE hcode = " + hcode + " " \
-              "AND date_format(admit_date,'%Y-%m-%d') BETWEEN SUBDATE(CURRENT_DATE,INTERVAL 2 DAY) AND CURRENT_DATE"
-        cursor.execute(sql)
-        result = cursor.fetchall()
+    try:
+        connection = get_connection()
+        with connection.cursor() as cursor:
+            sql = "SELECT chospital.hosname, t_pregancy.* FROM t_pregancy " \
+                  "INNER JOIN chospital ON t_pregancy.hcode = chospital.hoscode " \
+                  "WHERE hcode = %s " \
+                  "AND admit_date BETWEEN SUBDATE(CURRENT_DATE,INTERVAL 2 DAY) AND CURRENT_DATE"
+            cursor.execute(sql, hcode)
+            result = cursor.fetchall()
         connection.close()
 
         return result
+    except pymysql.Error as e:
+        raise HTTPException(500, f"Database error: {e}")
+    except Exception as e:
+        raise HTTPException(500, f"An error occurred: {e}")
 
 
 def read_patient_by_an(hcode, an):

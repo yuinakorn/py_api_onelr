@@ -1,5 +1,5 @@
 from typing import List
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 
 from sqlalchemy.orm import Session
 from models.database import get_db
@@ -27,8 +27,14 @@ def read_dashboard_all():
     return dashboard_controller.read_dashboard_all()
 
 
+def validate_hcode(hcode: str):
+    if hcode is None or hcode.strip() == "":
+        raise HTTPException(400, "Invalid hcode")
+    return hcode
+
+
 @router.post("/hospital/{hcode}")
-def read_hospital_by_hcode(hcode: str):
+def read_hospital_by_hcode(hcode: str = Depends(validate_hcode)):
     return dashboard_controller.read_hospital_by_hcode(hcode)
 
 
