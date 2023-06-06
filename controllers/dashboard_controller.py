@@ -70,7 +70,7 @@ def read_dashboard_all():
               "CURRENT_DATE as currentdate " \
               "FROM t_pregancy " \
               "INNER JOIN chospital on chospital.hoscode = t_pregancy.hcode " \
-              "WHERE admit_date BETWEEN SUBDATE(CURRENT_DATE,INTERVAL 2 DAY) AND CURRENT_DATE " \
+              "WHERE left(admit_date,10) BETWEEN SUBDATE(CURRENT_DATE,INTERVAL 2 DAY) AND CURRENT_DATE " \
               "GROUP BY t_pregancy.hcode"
         cursor.execute(sql)
         result = cursor.fetchall()
