@@ -94,6 +94,7 @@ def read_hospital_by_hcode(hcode):
                   "INNER JOIN chospital ON t_pregancy.hcode = chospital.hoscode " \
                   "WHERE hcode = %s " \
                   "AND left(admit_date,10) BETWEEN SUBDATE(CURRENT_DATE,INTERVAL 2 DAY) AND CURRENT_DATE"
+
             cursor.execute(sql, hcode)
             result = cursor.fetchall()
         connection.close()
