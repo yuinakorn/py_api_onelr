@@ -5,6 +5,7 @@ from dotenv import dotenv_values
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
 
+from controllers import pregs_controller
 from routers.utils.oauth2 import create_access_token
 
 config_env = dotenv_values(".env")
@@ -25,6 +26,16 @@ class AuthDisplayBase(BaseModel):
     tokenViewer: str
 
 
+class CheckTokenBase(BaseModel):
+    token: str
+
+    class Config:
+        orm_mode = True
+
+    def get(self, key):
+        return getattr(self, key, None)
+
+
 @router.post("/login")
 def read_lp_user(request: LoginBase):
     try:
@@ -41,3 +52,8 @@ def read_lp_user(request: LoginBase):
             return HTTPException(status_code=401, detail={"status": "error", "message": "You are not allowed!!"})
     except Exception as e:
         raise HTTPException(status_code=401, detail={"status": "error", "message": str(e)})
+
+
+@router.post("/check/token/")
+def check_token(request: CheckTokenBase):
+    return pregs_controller.token_check(request)

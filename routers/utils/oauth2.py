@@ -31,6 +31,7 @@ def generate_expire_date(expire_delta: Optional[timedelta] = None):
     if expire_delta:
         expire = datetime.utcnow() + expire_delta
     else:
+        # expire in 1 day
         expire = datetime.utcnow() + timedelta(days=1)
     return expire
 

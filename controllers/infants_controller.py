@@ -10,7 +10,7 @@ from sqlalchemy.orm import Session
 from fastapi import HTTPException, status
 from fastapi.responses import JSONResponse
 
-from models.pregs.pregs_model import DbPreg, Chospital
+from models.pregs.pregs_model import DbPreg, DbChospital
 
 
 config_env = dotenv_values(".env")

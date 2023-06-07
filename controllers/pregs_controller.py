@@ -1,8 +1,10 @@
 import jwt
 import logging
+
+import pymysql
 import requests
 from dotenv import dotenv_values
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
@@ -10,9 +12,21 @@ from sqlalchemy.orm import Session
 from fastapi import HTTPException, status
 from fastapi.responses import JSONResponse
 
-from models.pregs.pregs_model import DbPreg, Chospital
+from models.pregs.pregs_model import DbPreg, DbChospital
 
 config_env = dotenv_values(".env")
+
+
+def get_connection():
+    connection = pymysql.connect(host=config_env["DB_HOST"],
+                                 user=config_env["DB_USER"],
+                                 password=config_env["DB_PASSWORD"],
+                                 db=config_env["DB_NAME"],
+                                 charset=config_env["CHARSET"],
+                                 port=int(config_env["DB_PORT"]),
+                                 cursorclass=pymysql.cursors.DictCursor
+                                 )
+    return connection
 
 
 def token_decode(token):
@@ -36,18 +50,29 @@ def read_preg(request, db: Session):
                             detail={"status": "error", "message": "You are not allowed!!"})
 
 
-# เฉพาะแม่ข่าย
+# for main hospital (Pregs)
 def read_preg_all(request, db: Session):
     token = request.get("token")
     secret_key = config_env["SECRET_KEY"]
     try:
         decoded_token = jwt.decode(token, secret_key, algorithms=[config_env["ALGORITHM"]])
-        if decoded_token['hosCode'] == config_env['ADMIN_HOSCODE']:
-            result = db.query(DbPreg).all()
+
+        if decoded_token:  # if token is valid
+            stmt = "" if decoded_token['hosCode'] == config_env['ADMIN_HOSCODE'] else f"WHERE t_pregancy.hcode = {decoded_token['hosCode']} "
+
+            connection = get_connection()
+            with connection.cursor() as cursor:
+                sql = "SELECT t_pregancy.*,chospital.hosname FROM t_pregancy " \
+                      "INNER JOIN chospital ON chospital.hoscode = t_pregancy.hcode " \
+                      "AND left(admit_date,10) BETWEEN SUBDATE(CURRENT_DATE,INTERVAL 2 DAY) AND CURRENT_DATE " \
+                      f"{stmt}" \
+                      "ORDER BY admit_date DESC"
+                cursor.execute(sql)
+                result = cursor.fetchall()
             return result
         else:
             raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
-                                detail={"status": "error", "message": "You are not allowed!!"})
+                                detail={"status": "error", "message": "You are not allowed!"})
 
     except jwt.InvalidTokenError:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
@@ -263,5 +288,3 @@ def delete(db: Session, request):
     else:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
                             detail={"status": "error", "message": "You are not allowed!!"})
-
-

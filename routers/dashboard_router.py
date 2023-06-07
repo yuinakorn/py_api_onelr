@@ -3,7 +3,7 @@ from fastapi import APIRouter, Depends, HTTPException
 
 from sqlalchemy.orm import Session
 from models.database import get_db
-from models.pregs.pregs_model import PregBase, PregDisplayBase, LoginBase, CreateBase
+from models.pregs.pregs_model import PregBase, PregDisplayBase, LoginBase, CreateBase, PregsAllBase
 from controllers import dashboard_controller, pregs_controller
 
 # from utils.oauth2 import access_user_token
@@ -17,7 +17,7 @@ def read_hostpitals():
 
 
 # เฉพาะแม่ข่าย
-@router.post("/patients/", response_model=List[PregDisplayBase])
+@router.post("/patients/")
 def read_preg_all(request: LoginBase, db: Session = Depends(get_db)):
     return pregs_controller.read_preg_all(request, db)
 

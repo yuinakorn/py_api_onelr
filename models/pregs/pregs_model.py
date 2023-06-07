@@ -12,7 +12,7 @@ from typing import Optional
 class DbPreg(Base):
     __tablename__ = "t_pregancy"
     hcode = Column(String, primary_key=True, index=True)
-    cid = Column(String, primary_key=True, index=True)
+    cid = Column(String, ForeignKey('chospital.hoscode'), primary_key=True, index=True)
     hn = Column(String)
     an = Column(String, primary_key=True, index=True)
     admit_date = Column(DateTime, nullable=True)
@@ -41,10 +41,7 @@ class DbPreg(Base):
     refer_status = Column(String, nullable=True)
     image = Column(String, nullable=True)
 
-    # Relationship with Chospital
-    # hcode = Column(String, ForeignKey('chospital.id'))
-
-    # hcode = relationship("Chospital", back_populates="hoscode")
+    chospital = relationship("DbChospital", back_populates="t_pregancy")
 
 
 class PregBase(BaseModel):
@@ -104,6 +101,43 @@ class PregDisplayBase(BaseModel):
 
     class Config:
         orm_mode = True
+
+
+class PregsAllBase(BaseModel):
+    hcode: Optional[str] = None
+    cid: Optional[str] = None
+    hn: Optional[str] = None
+    an: Optional[str] = None
+    admit_date: Optional[datetime] = None
+    title: Optional[str] = None
+    pname: Optional[str] = None
+    lname: Optional[str] = None
+    age_y: Optional[str] = None
+    gravida: Optional[str] = None
+    parity: Optional[str] = None
+    ga: Optional[str] = None
+    anc_check_up: Optional[str] = None
+    no_of_anc: Optional[str] = None
+    weight_before_pregancy: Optional[float] = None
+    weight_at_delivery: Optional[float] = None
+    weight_gain: Optional[float] = None
+    height: Optional[str] = None
+    fundal_height: Optional[str] = None
+    hematocrit: Optional[str] = None
+    ultrasound: Optional[str] = None
+    cpd_risk_score: Optional[str] = None
+    status: Optional[int] = None
+    create_date: Optional[datetime] = None
+    modify_date: Optional[datetime] = None
+    user_create: Optional[str] = None
+    user_last_modify: Optional[str] = None
+    refer_status: Optional[int] = None
+    image: Optional[str] = None
+    hosname: Optional[str] = None
+
+    class Config:
+        orm_mode = True
+
 
 
 class LoginBase(BaseModel):
@@ -167,12 +201,12 @@ class DeleteBase(BaseModel):
 
 
 # Define your Chospital model
-class Chospital(Base):
+class DbChospital(Base):
     """This class represents a hospital."""
     __tablename__ = 'chospital'
     hoscode = Column(String, primary_key=True, index=True)
     hosname = Column(String, nullable=True)
-    # hoscode = Column(Integer, ForeignKey("t_pregancy.hcode"))
 
-    # owner = relationship("DbPreg", back_populates="hcode")
+    t_pregancy = relationship("DbPreg", back_populates="chospital")
+
 

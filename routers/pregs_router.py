@@ -26,9 +26,9 @@ def read_his_preg_by_cid(request: PregBaseCid):
     return pregs_controller.his_search(request)
 
 
-@router.post("/check/token/")
-def check_token(request: LoginBase):
-    return pregs_controller.token_check(request)
+# @router.post("/check/token/")
+# def check_token(request: LoginBase):
+#     return pregs_controller.token_check(request)
 
 
 @router.post("/create/")
