@@ -57,3 +57,4 @@ def read_lp_user(request: LoginBase):
 @router.post("/check/token/")
 def check_token(request: CheckTokenBase):
     return pregs_controller.token_check(request)
+
