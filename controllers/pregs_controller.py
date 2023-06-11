@@ -13,6 +13,7 @@ from fastapi import HTTPException, status
 from fastapi.responses import JSONResponse
 
 from models.pregs.pregs_model import DbPreg, DbChospital
+from controllers.dashboard_controller import read_hostpitals
 
 config_env = dotenv_values(".env")
 
@@ -29,10 +30,34 @@ def get_connection():
     return connection
 
 
+def line_notify(token, new_preg):
+    url = config_env["LINE_NOTIFY_URL"]
+    line_token = config_env["LINE_NOTIFY_TOKEN"]
+    decoded_token = jwt.decode(token, config_env["SECRET_KEY"], algorithms=[config_env["ALGORITHM"]])
+    hoscode = decoded_token["hosCode"]
+    hospital_data = read_hostpitals()
+    hoscode_to_find = hoscode
+    hosname = next((hospital["hosname"] for hospital in hospital_data if hospital["hoscode"] == hoscode_to_find), None)
+    str_admit_date = str(new_preg.admit_date)
+    admit_date = str_admit_date[:16]
+
+    msg = f"\n มีการลงทะเบียนคลอดรายใหม่จาก: {hosname} \n " \
+          f"HN: {new_preg.hn} \n " \
+          f"AN: {new_preg.an} \n " \
+          f"อายุ: {new_preg.age_y} ปี \n " \
+          f"CPD Risk: {new_preg.cpd_risk_score} \n " \
+          f"Hematocrit: {new_preg.hematocrit} % \n " \
+          f"น้ำหนักเด็ก(U/S): {new_preg.ultrasound} กรัม \n " \
+          f"วันที่แอดมิท {admit_date} น. \n \n " \
+          f"url: {config_env['FRONTEND_URL']}/#/logout?path=patient&hcode={hoscode_to_find}&an={new_preg.an}&cid={new_preg.cid}"
+    payload = {"message": msg}
+    headers = {"Authorization": "Bearer " + line_token}
+    requests.post(url, data=payload, headers=headers)
+
+
 def token_decode(token):
-    secret_key = config_env["SECRET_KEY"]
     try:
-        decoded_token = jwt.decode(token, secret_key, algorithms=[config_env["ALGORITHM"]])
+        decoded_token = jwt.decode(token, config_env["SECRET_KEY"], algorithms=[config_env["ALGORITHM"]])
         return {"token_data": decoded_token, "is_valid": True}
 
     except jwt.InvalidTokenError:
@@ -58,7 +83,8 @@ def read_preg_all(request, db: Session):
         decoded_token = jwt.decode(token, secret_key, algorithms=[config_env["ALGORITHM"]])
 
         if decoded_token:  # if token is valid
-            stmt = "" if decoded_token['hosCode'] == config_env['ADMIN_HOSCODE'] else f"WHERE t_pregancy.hcode = {decoded_token['hosCode']} "
+            stmt = "" if decoded_token['hosCode'] == config_env[
+                'ADMIN_HOSCODE'] else f"WHERE t_pregancy.hcode = {decoded_token['hosCode']} "
 
             connection = get_connection()
             with connection.cursor() as cursor:
@@ -185,6 +211,8 @@ def create(db: Session, request):
             db.add(new_preg)
             db.commit()
             db.refresh(new_preg)
+            if new_preg:
+                line_notify(token, new_preg)
             return {"message": "ok", "detail": new_preg}
         except SQLAlchemyError as e:
             db.rollback()
