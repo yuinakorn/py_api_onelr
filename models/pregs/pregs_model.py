@@ -39,6 +39,7 @@ class DbPreg(Base):
     user_create = Column(String, nullable=True)
     user_last_modify = Column(String, nullable=True)
     refer_status = Column(String, nullable=True)
+    refer_out_status = Column(String, nullable=True)
     image = Column(String, nullable=True)
 
     chospital = relationship("DbChospital", back_populates="t_pregancy")
@@ -97,6 +98,7 @@ class PregDisplayBase(BaseModel):
     user_create: Optional[str] = None
     user_last_modify: Optional[str] = None
     refer_status: Optional[int] = None
+    refer_out_status: Optional[int] = None
     image: Optional[str] = None
 
     class Config:
@@ -132,6 +134,7 @@ class PregsAllBase(BaseModel):
     user_create: Optional[str] = None
     user_last_modify: Optional[str] = None
     refer_status: Optional[int] = None
+    refer_out_status: Optional[int] = None
     image: Optional[str] = None
     hosname: Optional[str] = None
 
@@ -179,6 +182,7 @@ class CreateBase(BaseModel):
     user_create: Optional[str] = None
     user_last_modify: Optional[str] = None
     refer_status: Optional[int] = None
+    refer_out_status: Optional[int] = None
     image: Optional[str] = None
 
     class Config:

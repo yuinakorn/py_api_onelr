@@ -205,6 +205,7 @@ def create(db: Session, request):
             user_create=request.user_create,
             user_last_modify=request.user_last_modify,
             refer_status=request.refer_status,
+            refer_out_status=request.refer_out_status,
             image=image,
         )
         try:
@@ -270,6 +271,7 @@ def update(db: Session, request):
             result.modify_date = modify_date
             result.user_last_modify = request.user_last_modify
             result.refer_status = request.refer_status
+            result.refer_out_status = request.refer_out_status
             result.image = image
 
             try:
