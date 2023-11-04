@@ -157,7 +157,7 @@ def token_check(request):
         decoded_token = jwt.decode(token, secret_key, algorithms=["HS256"])
         user_data = {
             "hoscode": decoded_token["hosCode"],
-            "username": decoded_token["username"],
+            # "username": decoded_token["username"],
             # "user_cid": decoded_token["cid"]
         }
         # print(user_data)
