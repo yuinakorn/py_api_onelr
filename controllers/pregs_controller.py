@@ -90,7 +90,7 @@ def read_preg_all(request, db: Session):
             with connection.cursor() as cursor:
                 sql = "SELECT t_pregancy.*,chospital.hosname FROM t_pregancy " \
                       "INNER JOIN chospital ON chospital.hoscode = t_pregancy.hcode " \
-                      "AND left(admit_date,10) BETWEEN SUBDATE(CURRENT_DATE,INTERVAL 2 DAY) AND CURRENT_DATE " \
+                      "AND left(admit_date,10) BETWEEN SUBDATE(CURRENT_DATE,INTERVAL 5 DAY) AND CURRENT_DATE " \
                       f"{stmt}" \
                       "ORDER BY admit_date DESC"
                 cursor.execute(sql)
