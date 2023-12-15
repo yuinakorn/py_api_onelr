@@ -39,7 +39,15 @@ def get_connection():
 
 
 def read_hostpitals():
-    connection = get_connection()
+    connection = pymysql.connect(host=config_env["DB_HOST"],
+                                 user=config_env["DB_USER"],
+                                 password=config_env["DB_PASSWORD"],
+                                 db=config_env["DB_NAME"],
+                                 charset=config_env["CHARSET"],
+                                 port=int(config_env["DB_PORT"]),
+                                 cursorclass=pymysql.cursors.DictCursor
+                                 )
+
     with connection.cursor() as cursor:
         sql = "SELECT hoscode,hosname FROM chospital " \
               "WHERE provcode = '51' " \
