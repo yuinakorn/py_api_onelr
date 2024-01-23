@@ -1,5 +1,6 @@
 import jwt
 import logging
+import pymysql
 from dotenv import dotenv_values
 from datetime import datetime
 
@@ -12,6 +13,18 @@ from fastapi.responses import JSONResponse
 from models.progress.progress_model import DbProgress
 
 config_env = dotenv_values(".env")
+
+
+def get_connection():
+    connection = pymysql.connect(host=config_env["DB_HOST"],
+                                 user=config_env["DB_USER"],
+                                 password=config_env["DB_PASSWORD"],
+                                 db=config_env["DB_NAME"],
+                                 charset=config_env["CHARSET"],
+                                 port=int(config_env["DB_PORT"]),
+                                 cursorclass=pymysql.cursors.DictCursor
+                                 )
+    return connection
 
 
 def token_decode(token):
@@ -40,7 +53,8 @@ def search(db: Session, request):
 
     if token_decode(token)['is_valid']:
         # shorted code
-        hcode = request.get("hcode") if token_decode(token)['token_data']['hosCode'] == '10714' else token_decode(token)['token_data']['hosCode']
+        hcode = request.get("hcode") if token_decode(token)['token_data']['hosCode'] == '10714' else \
+        token_decode(token)['token_data']['hosCode']
 
         result = db.query(DbProgress).filter(DbProgress.hcode == hcode,
                                              DbProgress.cid == request.get("cid"),
@@ -186,3 +200,49 @@ def delete(db: Session, request):
     else:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
                             detail={"status": "error", "message": "You are not allowed!!"})
+
+
+def show_progress(request):
+    token = request.get("token")
+    hcode = request.get("hcode")
+    an = request.get("an")
+    cid = request.get("cid")
+    if token_decode(token)['is_valid']:
+        try:
+            connection = get_connection()
+            with connection.cursor() as cursor:
+                sql = f"SELECT p.progress_date_time,max(p.C06_v1) as vs,max(p.C02_v1) as uc_i,max(p.C02_v2) as uc_d, " \
+                      "max(p.C02_v3) as uc_stage,max(p.C03_v1) as fhs ,max(p.C01_v1) as cervix_open,max(p.C01_com) as cervix_open_com " \
+                      "FROM (" \
+                      " SELECT progress_date_time FROM progress" \
+                      " WHERE hcode = %s" \
+                      " AND an = %s" \
+                      " AND cid = %s" \
+                      " GROUP BY progress_date_time" \
+                      " ORDER BY progress_date_time,`code`) t" \
+                      " LEFT JOIN (" \
+                      " SELECT progress.progress_date_time," \
+                      " if(progress.`code` = 'C06' AND progress.`value` is not NULL,progress.`value`,null) as 'C06_v1'," \
+                      " if(progress.`code` = 'C02' AND progress.`value` is not NULL,progress.`value`,null) as 'C02_v1'," \
+                      " if(progress.`code` = 'C02' and progress.value2 is NOT NULL,progress.value2,null) as 'C02_v2'," \
+                      " if(progress.`code` = 'C02' and progress.value3 is NOT NULL,progress.value3,null) as 'C02_v3'," \
+                      " if(progress.`code` = 'C03' and progress.`value3` is NOT NULL,progress.`value3`,null) as 'C03_v1'," \
+                      " if(progress.`code` = 'C01' and progress.value is NOT NULL,progress.value,null) as 'C01_v1'," \
+                      " if(progress.`code` = 'C01' and progress.`comment` is NOT NULL,progress.`comment`,null) as 'C01_com'" \
+                      " FROM progress" \
+                      " INNER JOIN ccode ON ccode.`code` = progress.`code`" \
+                      " WHERE hcode = %s" \
+                      " AND an = %s" \
+                      " AND cid = %s" \
+                      " ORDER BY progress.progress_date_time,ccode.`code`" \
+                      " ) p ON t.progress_date_time = p.progress_date_time" \
+                      " GROUP BY p.progress_date_time"
+
+                cursor.execute(sql, (hcode, an, cid, hcode, an, cid))
+                result = cursor.fetchall()
+            return result
+        except SQLAlchemyError as e:
+            error_message = f"Error reading progress: {str(e)}"
+            logging.error(error_message)
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
+                                detail={"status": "error", "message": error_message})

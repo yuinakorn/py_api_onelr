@@ -33,3 +33,7 @@ def update_progress(request: CreateBase, db: Session = Depends(get_db)):
 def delete_progress(request: DeleteBase, db: Session = Depends(get_db)):
     return progress_controller.delete(db, request)
 
+
+@router.post("/table/")
+def show_progress(request: ProgressBase):
+    return progress_controller.show_progress(request)

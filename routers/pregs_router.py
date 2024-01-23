@@ -3,8 +3,9 @@ from fastapi import APIRouter, Depends
 
 from sqlalchemy.orm import Session
 from models.database import get_db
-from models.pregs.pregs_model import PregBase, PregDisplayBase, LoginBase, CreateBase, PregBaseCid, DeleteBase
+from models.pregs.pregs_model import PregBase, PregDisplayBase, LoginBase, CreateBase, PregBaseCid, DeleteBase, ProgressBase
 from controllers import pregs_controller
+
 
 # from utils.oauth2 import access_user_token
 
@@ -44,4 +45,5 @@ def update_preg(request: CreateBase, db: Session = Depends(get_db)):
 @router.delete("/delete/")
 def delete_preg(request: DeleteBase, db: Session = Depends(get_db)):
     return pregs_controller.delete(db, request)
+
 

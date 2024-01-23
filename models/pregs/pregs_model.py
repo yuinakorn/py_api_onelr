@@ -45,6 +45,13 @@ class DbPreg(Base):
     chospital = relationship("DbChospital", back_populates="t_pregancy")
 
 
+class ProgressBase(BaseModel):
+    token: str
+    cid: str
+    an: str
+    hcode: str
+
+
 class PregBase(BaseModel):
     token: str
     cid: str
